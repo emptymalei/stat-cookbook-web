@@ -1,7 +1,15 @@
+# Install needed packages if necessary
+needed_packages = c("ggplot2", "reshape2", "grid", "RColorBrewer", "VGAM")
+if (length(setdiff(needed_packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(needed_packages, rownames(installed.packages())),
+                   dependencies=TRUE, repos="http://cran.r-project.org")
+}
+
 library(ggplot2)
 library(reshape2)
 library(grid)
 library(RColorBrewer)
+library(VGAM) # [dp]pareto
 
 line_width = 1.3
 point_size = 4
@@ -228,12 +236,12 @@ plot.f <- function(mode, xmin=0, xmax=5,
 plot.exp <- function(mode, xmin=0, xmax=5,
                      theta=data.frame(c(2,1,0.4)),
                      title="Exponential") {
-  lab.fn <- function(x) substitute(beta==i, list(i=x))
+  lab.fn <- function(x) substitute(beta==i, list(i=1/x))
   plot.continuous(xmin, xmax, theta, "exp", mode, title, lab.fn)
 }
 
 plot.gamma <- function(mode, xmin=0, xmax=20,
-                       theta=data.frame(a=c(1,2,3,5,9), b=c(2,2,2,1,0.5)),
+                       theta=data.frame(a=c(1,2,3,5,9), b=c(0.5,0.5,0.5,1,2)),
                        title="Gamma") {
   lab.fn <- function(x, y) substitute(list(alpha==i, beta==j), list(i=x, j=y))
   plot.continuous(xmin, xmax, theta, "gamma", mode, title, lab.fn)
@@ -298,7 +306,6 @@ plot.weibull <- function(mode, xmin=0, xmax=2.5,
 plot.pareto <- function(mode, xmin=0.8, xmax=2.5,
                         theta=data.frame(xm=c(1,1,1), a=c(1,2,4)),
                         title="Pareto") {
-  require(VGAM)
   lab.fn <- function(x, y) substitute(list(x[m]==i, k==j), list(i=x, j=y))
   plot.continuous(xmin, xmax, theta, "pareto", mode, title, lab.fn)
 }
